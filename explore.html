@@ -1,0 +1,190 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Explore</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/cb792c0850.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="{% static 'css/app.css' %}">
+
+    <style>
+        /* Reset and general styles */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            background-color: #f4f4f4;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            background-color: #ffffff;
+            height: 100vh;
+            border-right: 1px solid #ddd;
+            position: fixed;
+            padding-top: 20px;
+        }
+
+        /* Profile logo (square) */
+        .sidebar .profile-logo {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 12px;
+            border: 2px solid #ccc;
+            background-color: #fff;
+        }
+
+        /* Sidebar links */
+        .sidebar a {
+            color: #333;
+            text-decoration: none;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            padding: 10px 15px;
+            margin: 5px 0;
+            border-radius: 8px;
+            transition: background 0.3s ease;
+        }
+        .sidebar a:hover,
+        .sidebar a.active {
+            background-color: #f0f0f0;
+        }
+        .sidebar i {
+            margin-right: 10px;
+        }
+
+        /* Main content */
+        main {
+            margin-left: 220px;
+            padding: 20px;
+        }
+
+        /* Explore Grid */
+        .image-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 20px;
+        }
+        .image-card {
+            position: relative;
+            overflow: hidden;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            background: #fff;
+            transition: transform 0.3s ease;
+        }
+        .image-card:hover {
+            transform: translateY(-5px);
+        }
+        .image-card img {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            display: block;
+            transition: opacity 0.3s ease;
+        }
+        .image-card:hover img {
+            opacity: 0.3;
+        }
+        .overlay {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .image-card:hover .overlay {
+            opacity: 1;
+        }
+        .overlay a {
+            color: #000;
+            font-weight: bold;
+            font-size: 1.2rem;
+            text-decoration: none;
+        }
+        .overlay p {
+            margin-top: 5px;
+            font-size: 0.95rem;
+            color: #333;
+            text-align: center;
+            padding: 0 5px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <nav class="col-md-2 d-none d-md-block sidebar">
+            <div class="text-center mt-3">
+                <!-- Profile picture with fallback -->
+                <img src="{% if profile.profileimg %}{{ profile.profileimg.url }}{% else %}{% static 'images/default.png' %}{% endif %}"
+                     alt="Profile Picture" class="profile-logo mb-2">
+
+                <h4 class="mt-2"><a href="/profile/{{ user }}" style="text-decoration:none;">@{{ user }}</a></h4>
+            </div>
+
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link active" href="/"><i class="fa-solid fa-house mr-1"></i> Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/explore"><i class="fa-solid fa-compass mr-1"></i> Explore</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#exampleModal3"><i class="fa-solid fa-magnifying-glass mr-1"></i> Search</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#exampleModal"><i class="fa-solid fa-circle-plus mr-1"></i> Create Post</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/profile/{{ user }}"><i class="fa-solid fa-user mr-1"></i> Profile</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/logout"><i class="fa-solid fa-right-from-bracket me-2"></i>Logout</a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="col-md-10 offset-md-2">
+            {% include "modal.html" %}
+            {% include "search.html" %}
+
+            <div class="container">
+                <h3 class="mb-4">Explore Posts</h3>
+                <div class="image-grid">
+                    {% for pos in post %}
+                        <div class="image-card">
+                            <img src="{{ pos.image.url }}" alt="{{ pos.caption }}">
+                            <div class="overlay">
+                                <a href="/profile/{{ pos.user }}">@{{ pos.user }}</a>
+                                <p>{{ pos.caption }}</p>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<script src="{% static 'js/app.js'%}"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

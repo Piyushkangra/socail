@@ -1,0 +1,50 @@
+{% load static %}
+<div class="modal fade" id="exampleModal1" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content bg-dark text-light">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Edit Profile</h1>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+
+                <!-- POST form to same profile page -->
+                <form method="POST" action="{% url 'profile' user_profile.user.username %}" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    
+                    <!-- Profile Image -->
+                    <div class="mb-3 text-center">
+                        {% if user_profile.profileimg %}
+                            <img src="{{ user_profile.profileimg.url }}" alt="Profile Picture"
+                                 class="rounded-circle mb-2" width="80" height="80">
+                        {% else %}
+                            <img src="{% static 'css/upload.png' %}" alt="Upload"
+                                 class="rounded-circle mb-2" width="80" height="80">
+                        {% endif %}
+
+                        <label for="profileimg" class="col-form-label">Profile Photo</label>
+                        <input type="file" name="profileimg" class="form-control bg-dark text-light border-secondary" id="profileimg">
+                    </div>
+
+                    <!-- Bio -->
+                    <div class="mb-3">
+                        <label for="bio" class="col-form-label">Bio</label>
+                        <textarea class="form-control bg-dark text-light border-secondary" name="bio" id="bio" placeholder="Bio...">{{ user_profile.bio }}</textarea>
+                    </div>
+
+                    <!-- Location -->
+                    <div class="mb-3">
+                        <label for="location" class="col-form-label">Location</label>
+                        <input type="text" class="form-control bg-dark text-light border-secondary" name="location" id="location" value="{{ user_profile.location }}">
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Update Profile</button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
